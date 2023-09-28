@@ -15,4 +15,10 @@ public class ${className} {
         this.${property.fieldName} = ${property.fieldName};
     }
 #end
+
+
+
+#foreach( $customMethod in $customMethods )
+    ${customMethod.getMethodDescription()}
+#end
 }

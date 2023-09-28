@@ -1,7 +1,5 @@
 package com.nucleus.generator.pom;
 
-import java.time.LocalDate;
-
 public class User {
 
     private int id;
@@ -37,4 +35,8 @@ public class User {
     public void setDob(LocalDate dob) {
         this.dob = dob;
     }
+
+
+
+    public void validate(){ //validate code}
 }

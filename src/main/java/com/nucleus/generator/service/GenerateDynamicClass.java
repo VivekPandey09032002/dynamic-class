@@ -2,6 +2,8 @@ package com.nucleus.generator.service;
 
 
 import com.nucleus.generator.bean.Field;
+import com.nucleus.generator.entity.CustomMethod;
+import com.nucleus.generator.repo.CustomMethodRepo;
 import lombok.RequiredArgsConstructor;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -14,6 +16,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +35,8 @@ public class GenerateDynamicClass {
     private final VelocityContext velocityContext;
     private final Template velocityTemplate;
 
+    private final CustomMethodRepo customMethodRepo;
+
     public String generateClass() {
         velocityContext.put("packageName", packageName);
 
@@ -41,11 +46,29 @@ public class GenerateDynamicClass {
         properties.add(new Field("firstName", "String"));
         properties.add(new Field("lastName", "String"));
         properties.add(new Field("dob", "LocalDate"));
+
+        // get dynamic methods  TODO TESTING PURPOSE
+        List<CustomMethod> customMethods = new ArrayList<CustomMethod>();
+        CustomMethod customMethod = new CustomMethod();
+        customMethod.setMethodDescription("public void validate(){ //validate code}");
+        customMethod.setMethodName("validate");
+        customMethodRepo.save(customMethod);
+        Optional<CustomMethod> validate = customMethodRepo.findById("validate");
+        customMethods.add(validate.get());
+
+        velocityContext.put("customMethods", customMethods);
+
+
+        // other properties
         velocityContext.put("className", modelName);
         velocityContext.put("properties", properties);
 
+
+
         StringWriter writer = new StringWriter();
         velocityTemplate.merge(velocityContext, writer);
+
+        System.out.println(writer.toString());
 
         return writer.toString();
     }
